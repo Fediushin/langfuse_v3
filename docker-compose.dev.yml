@@ -4,14 +4,15 @@ services:
     user: "101:101"
     environment:
       CLICKHOUSE_DB: default
-      CLICKHOUSE_USER: clickhouse
-      CLICKHOUSE_PASSWORD: clickhouse
+      CLICKHOUSE_USER: ${CLICKHOUSE_USER}
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_PASSWORD}
+      CLICKHOUSE_TCP_PORT: 9002
     volumes:
       - langfuse_clickhouse_data:/var/lib/clickhouse
       - langfuse_clickhouse_logs:/var/log/clickhouse-server
     ports:
-      - 127.0.0.1:8123:8123
-      - 127.0.0.1:9000:9000
+      - 127.0.0.1:18123:8123
+      - 127.0.0.1:19001:9002
     depends_on:
       - postgres
 
@@ -19,13 +20,13 @@ services:
     image: docker.io/minio/minio
     entrypoint: sh
     # create the 'langfuse' bucket before starting the service
-    command: -c 'mkdir -p /data/langfuse && minio server --address ":9000" --console-address ":9001" /data'
+    command: -c 'mkdir -p /data/langfuse && minio server --address ":9090" --console-address ":9091" /data'
     environment:
-      MINIO_ACCESS_KEY: minio
-      MINIO_SECRET_KEY: miniosecret
+      MINIO_ACCESS_KEY: ${LANGFUSE_S3_BATCH_EXPORT_ACCESS_KEY_ID}
+      MINIO_SECRET_KEY: ${LANGFUSE_S3_BATCH_EXPORT_SECRET_ACCESS_KEY}
     ports:
-      - 127.0.0.1:9090:9000
-      - 127.0.0.1:9091:9001
+      - 127.0.0.1:19010:9090
+      - 127.0.0.1:19011:9091
     volumes:
       - langfuse_minio_data:/data
     healthcheck:
@@ -41,23 +42,24 @@ services:
     command: >
       --requirepass ${REDIS_AUTH:-myredissecret}
     ports:
-      - 127.0.0.1:6379:6379
+      - 127.0.0.1:16379:6379
 
   postgres:
     image: docker.io/postgres:${POSTGRES_VERSION:-latest}
     restart: always
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -p 5433"]
       interval: 3s
       timeout: 3s
       retries: 10
-    command: ["postgres", "-c", "log_statement=all"]
+    command: ["postgres", "-c", "log_statement=all", "-p", "5433"]
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD=PgStr0ng#Pwd2024
       - POSTGRES_DB=postgres
+      - PGPORT=5433
     ports:
-      - 127.0.0.1:5432:5432
+      - 127.0.0.1:25432:5433
     volumes:
       - langfuse_postgres_data:/var/lib/postgresql/data
 
