@@ -17,7 +17,7 @@ services:
       - postgres
 
   minio:
-    image: docker.io/minio/minio
+    image: docker.io/minio/minio:RELEASE.2025-07-23T15-54-02Z
     entrypoint: sh
     # create the 'langfuse' bucket before starting the service
     command: -c 'mkdir -p /data/langfuse && minio server --address ":9090" --console-address ":9091" /data'
@@ -45,7 +45,7 @@ services:
       - 127.0.0.1:16379:6379
 
   postgres:
-    image: docker.io/postgres:${POSTGRES_VERSION:-latest}
+    image: docker.io/postgres:${POSTGRES_VERSION:-17.6}
     restart: always
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -p 5433"]

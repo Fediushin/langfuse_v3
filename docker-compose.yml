@@ -86,7 +86,7 @@ services:
       LANGFUSE_INIT_USER_PASSWORD: ${LANGFUSE_INIT_USER_PASSWORD:-}
 
   clickhouse:
-    image: docker.io/clickhouse/clickhouse-server
+    image: docker.io/clickhouse/clickhouse-server:25.8.2.29
     restart: always
     user: "101:101"
     environment:
@@ -107,7 +107,7 @@ services:
       start_period: 1s
 
   minio:
-    image: docker.io/minio/minio
+    image: docker.io/minio/minio:RELEASE.2025-07-23T15-54-02Z
     restart: always
     entrypoint: sh
     # create the 'langfuse' bucket before starting the service
@@ -128,7 +128,7 @@ services:
       start_period: 1s
 
   redis:
-    image: docker.io/redis:7
+    image: docker.io/redis:7.4.5
     restart: always
     # CHANGEME: row below to secure redis password
     command: >
@@ -142,7 +142,7 @@ services:
       retries: 10
 
   postgres:
-    image: docker.io/postgres:${POSTGRES_VERSION:-latest}
+    image: docker.io/postgres:${POSTGRES_VERSION:-17.6}
     restart: always
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
