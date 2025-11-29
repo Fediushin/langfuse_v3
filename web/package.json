@@ -171,7 +171,7 @@
     "@testing-library/jest-dom": "^6.4.6",
     "@testing-library/react": "^15.0.7",
     "@types/bcryptjs": "^2.4.6",
-    "@types/cors": "^2.8.17",
+    "@types/cors": "^2.8.19",
     "@types/diff": "^7.0.0",
     "@types/dompurify": "^3.0.5",
     "@types/eslint": "^8.56.7",
